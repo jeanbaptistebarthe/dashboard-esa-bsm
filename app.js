@@ -240,11 +240,11 @@
     try {
       var ok = await loadDataJson();
       if (ok) { showApp(); renderAll(); startPolling(); }
-      else { showLogin("Connexion faite, mais data.json n'a pas pu être chargé ni créé — vérifie que le token a bien « Contents : Read and write » sur le dépôt de données, puis réessaie."); }
+      else { showLogin("Connexion faite, mais le dépôt de données est inaccessible. Trois causes possibles — dans l'ordre : ① jeton fine-grained (github_pat_…) utilisé alors que le dépôt appartient à un autre compte → crée un jeton CLASSIC (ghp_…, case « repo » cochée) : Settings → Developer settings → Tokens (classic) ; ② invitation de collaborateur pas encore acceptée → ouvre l'email GitHub « Accept invitation » ; ③ jeton sans « Contents : Read and write ». Corrige puis réessaie."); }
     } catch (err) {
       if (err && err.message === "auth") {
         clearToken();
-        showLogin("Connexion refusée — vérifie le token et qu'il a bien accès (Contents : Read and write) au dépôt " + DATA_REPO_OWNER + "/" + DATA_REPO_NAME + ".");
+        showLogin("Connexion refusée — jeton invalide ou expiré. Propriétaire : fine-grained scopé sur " + DATA_REPO_OWNER + "/" + DATA_REPO_NAME + " (Contents : Read and write). Associé : jeton CLASSIC (ghp_…, case « repo »), après avoir accepté l'invitation de collaborateur.");
       } else if (err && err.message === "badjson") {
         showLogin("Connexion réussie, mais data.json est illisible (JSON invalide) — restaure une version précédente depuis l'historique du dépôt de données, puis réessaie.");
       } else {
